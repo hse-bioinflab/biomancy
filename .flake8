@@ -1,0 +1,58 @@
+[flake8]
+per-file-ignores =
+    # Should we completely ignore test files?
+    tests/*.py:WPS226,WPS432,WPS435,S101,D100,D103,WPS204,E800,WPS210,WPS231,WPS221,WPS220,WPS440,WPS303,WPS218,S301,S403,WPS442,WPS227
+max-line-length = 120
+ignore =
+    # Multiline parameters - style is not important
+    WPS317,
+    # Allow float zero, e.g. 0.0
+    WPS358,
+    # Why imports are considered as logic in this rule?
+    WPS412,
+    # Allow relative imports
+    WPS300,
+    # Allow f strings
+    WPS305,
+    # Allow backslash for line breaks
+    N400,
+    # isort must be configured to follow the pycharm formatting rules
+    I001,
+    I005,
+    # Found variables that are only used for 'return'
+    WPS331,
+    # Found using @staticmethod
+    WPS602,
+    # TODO: remove after writing docs
+    D100,
+    D101,
+    D102,
+    D103,
+    D104,
+    D105,
+    D106,
+    D107,
+    # Found wrong variable name
+    WPS110,
+    # Found assignment to a subscript slice
+    WPS362,
+    # imported but unused
+    F401,
+    # Found line with high Jones Complexity
+    WPS221,
+    # Found function with too much cognitive complexity
+    WPS231,
+    # Found module cognitive complexity that is too high
+    WPS232,
+    # False positives: Found protected module import
+    WPS436,
+    # Found too long compare
+    WPS228,
+    # Standard pseudo-random generators are not suitable for security/cryptographic purposes
+    S311,
+    # Line break after binary operator
+    W504,
+    # Syntax error: invalid syntax
+    E999
+max-local-variables = 10
+max-arguments = 7
