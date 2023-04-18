@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Callable
 
 import numpy as np
 from numpy import typing as npt
@@ -21,6 +22,9 @@ class DataSource(ABC):
 
         return data
 
+    def apply(self, fn: Callable[[np.ndarray], np.ndarray]) -> 'DataSource':
+        return _Lambda(self, fn)
+
     def __eq__(self, other):
         return isinstance(other, DataSource) and other.dtype == self.dtype
 
@@ -29,3 +33,15 @@ class DataSource(ABC):
     @abstractmethod
     def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> np.ndarray:
         raise NotImplementedError()
+
+
+class _Lambda(DataSource):
+
+    def __init__(self, source: DataSource, fn: Callable[[np.ndarray], np.ndarray], **kwargs):
+        super().__init__(**kwargs)
+        self.source = source
+        self.fn = fn
+
+    def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> np.ndarray:
+        fetched = self.source.fetch(contig, strand, start, end)
+        return self.fn(fetched)
