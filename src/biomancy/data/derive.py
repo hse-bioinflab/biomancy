@@ -25,7 +25,8 @@ def chromsizes(*_, assembly: Optional[str] = None, fasta: Optional[Path] = None)
 
 
 def bins(
-    source: BedLike, binsize: int,
+    source: BedLike,
+    binsize: int,
     step: Optional[int] = None,
     exclude: Optional[BedLike] = None,
     dropshort: bool = True,

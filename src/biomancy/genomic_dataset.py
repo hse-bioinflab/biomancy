@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import Optional
 
 from pybedtools import Interval
 
 from .data.sources import DataSource
+from .data.typing import BedLike
 from .transform.intervals import IntervalTransform
 
 
@@ -10,17 +11,19 @@ class GenomicDataset(object):
     def __init__(
         self,
         features: dict[str, DataSource],
-        intervals: List[Interval],
+        intervals: BedLike,
         interval_transform: Optional[IntervalTransform] = None,
     ):
         if not features or not intervals:
             raise ValueError('There must be at least 1 data source for features and at least 1 genomic interval.')
         self.features = features
-        self.intervals = intervals
+        self.intervals = tuple(intervals)
         self.interval_transform = interval_transform
 
     def __getitem__(self, idx):
         it = self.intervals[idx]
+        # Copy interval and strip meta information
+        it = Interval(it.chrom, it.start, it.end, strand=it.strand)
         if self.interval_transform is not None:
             it = self.interval_transform(interval=it)['interval']
 
