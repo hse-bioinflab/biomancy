@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
     "pybedtools ~= 0.9.0",
     "biopython ~= 1.81",
-#    "torch ~= 2.0.0",
+    #    "torch ~= 2.0.0",
     "intervaltree ~= 3.1.0",
     "pyBigWig ~= 0.3.22",
     "joblib ~= 1.2.0",
@@ -30,9 +30,15 @@ dependencies = [
 [project.optional-dependencies]
 develop = [
     'pytest ~= 7.2.2',
+    'mypy ~= 1.2.0',
     'wemake-python-styleguide ~= 0.17.0',
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/hse-bioinflab/biomancy"
 "Bug Tracker" = "https://github.com/hse-bioinflab/biomancy/issues"
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+plugins = "numpy.typing.mypy_plugin"

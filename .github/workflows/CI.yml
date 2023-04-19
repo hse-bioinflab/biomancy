@@ -35,6 +35,9 @@ jobs:
           sudo mv bedtools.static.binary /usr/bin/bedtools
           # Pip dependencies
           python -m pip install '.[develop]'
+      - name: Mypy type checls
+        run: |
+          mypy src
       - name: Tests
         run: |
           pytest

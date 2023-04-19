@@ -1,19 +1,18 @@
 import logging
 from bisect import bisect_right
 from collections import defaultdict
-from typing import Optional
 
 from pybedtools import Interval, BedTool
 
 from ..base import Transform
-from ..typing import IntervalLimit
+from ..typing import IntervalLimit, ToTransform
 
 
 class InjectLimits(Transform):
     limits: dict[str, list[IntervalLimit]]
 
-    def __init__(self, *, rois: list[Interval], **kwargs):
-        super().__init__(pb='always', **kwargs)
+    def __init__(self, *, rois: list[Interval]):
+        super().__init__(pb='always')
 
         indexed = defaultdict(list)
         for roi in BedTool(rois).sort().merge():
@@ -23,14 +22,16 @@ class InjectLimits(Transform):
 
         self.limits = {chrom: sorted(rois) for chrom, rois in indexed.items()}
 
-    def __call__(self, *, interval: Interval, limits: Optional[tuple[int, int]] = None, **kwargs):
+    def __call__(self, **kwargs: ToTransform) -> ToTransform:
         # Inject limits if needed
-        if limits is None:
-            limits = self.limits_for(interval)
+        if 'limits' not in kwargs:
+            if 'interval' not in kwargs:
+                raise ValueError('TODO')
+            kwargs['limits'] = self.limits_for(kwargs['interval'])
 
-        return super().__call__(interval=interval, limits=limits, **kwargs)
+        return super().__call__(**kwargs)
 
-    def limits_for(self, interval: Interval):
+    def limits_for(self, interval: Interval) -> IntervalLimit:
         index = self.limits.get(interval.chrom, None)
         if index is None:
             raise ValueError(f'There are no limits available for the {interval.chrom} chromosome.')
@@ -55,8 +56,8 @@ class InjectLimits(Transform):
             )
         return roi
 
-    def _transform(self, **sample):
+    def _transform(self, **sample: ToTransform) -> ToTransform:
         return sample
 
-    def _no_transform(self, **sample):
+    def _no_transform(self, **sample: ToTransform) -> ToTransform:
         return sample

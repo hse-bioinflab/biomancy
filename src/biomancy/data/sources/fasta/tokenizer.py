@@ -5,7 +5,8 @@ import numpy as np
 from numpy import typing as npt
 
 from .fasta import Fasta
-from ..data_source import DataSource, Strand
+from ..data_source import DataSource
+from ...typing import Strand, Data
 
 
 class Tokenizer(DataSource):
@@ -16,9 +17,8 @@ class Tokenizer(DataSource):
         vocab: dict[str, int],
         *,
         dtype: npt.DTypeLike = 'int32',
-        **kwargs,
     ):
-        super().__init__(dtype=dtype, **kwargs)
+        super().__init__(dtype=dtype)
 
         if kmers < 1:
             raise ValueError(f'Kmers must be >= 1, found {kmers}')
@@ -30,15 +30,15 @@ class Tokenizer(DataSource):
         self.vocab = vocab
 
     @staticmethod
-    def parse_vocab(config: Path):
+    def parse_vocab(config: Path) -> dict[str, int]:
         if not config.is_file():
             raise ValueError(f"Vocab file doesn't exist: {config}")
         with open(config) as stream:
-            config = stream.read().upper()
-        tokens = config.split('\n')  # [:-1]
+            lines = stream.read().upper()
+        tokens = lines.split('\n')  # [:-1]
         return {token.strip('\\'): ind for ind, token in enumerate(tokens)}
 
-    def pad(self, sequence: np.ndarray, tolen: int, padtok: str = '[PAD]') -> np.ndarray:
+    def pad(self, sequence: Data, tolen: int, padtok: str = '[PAD]') -> Data:
         if len(sequence) > tolen:
             raise ValueError('Padding is only possible when current length < target')
         if len(sequence) < tolen:
@@ -47,16 +47,14 @@ class Tokenizer(DataSource):
         assert len(sequence) == tolen  # noqa: S101
         return sequence
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return super().__eq__(other) and \
             isinstance(other, Tokenizer) and \
             self.kmers == other.kmers and \
             self.vocab == other.vocab and \
             self.fasta == other.fasta  # noqa: WPS222
 
-    __hash__ = None
-
-    def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> np.ndarray:
+    def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> Data:
         sequence = self.fasta.load(contig, strand, start, end)
 
         # split sequence into kmers & tokenize

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from Bio import SeqIO, Seq
 
-from ..data_source import Strand
+from ...typing import Strand
 
 
 def _parse(fasta: Path) -> dict[str, str]:
@@ -46,7 +46,7 @@ class Fasta(object):
             sequence = Seq.complement(sequence)
         return sequence
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, Fasta) and other.fasta == self.fasta and other.sequences == self.sequences
 
-    __hash__ = None
+    __hash__ = None  # type: ignore[assignment]

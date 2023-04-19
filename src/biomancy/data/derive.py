@@ -10,18 +10,17 @@ from pybedtools import Interval, BedTool, chromsizes as fetch_chromsizes
 from .typing import BedLike, ChromSizes
 
 
-def chromsizes(*_, assembly: Optional[str] = None, fasta: Optional[Path] = None) -> ChromSizes:
+def chromsizes(*, assembly: Optional[str] = None, fasta: Optional[Path] = None) -> ChromSizes:
     options = sum([assembly is None, fasta is None])
     if options != 1:
         raise ValueError("'assembly' id *or* 'fasta' path must be specified")
 
     if assembly is not None:
-        result = fetch_chromsizes(assembly)
-        result = {contig: end for contig, (_, end) in result.items()}
+        result: dict[str, tuple[int, int]] = fetch_chromsizes(assembly)
+        return {contig: end for contig, (_, end) in result.items()}
     else:
-        assert fasta is not None  # noqa: S101
+        assert fasta is not None  # noqa: S101,WPS503
         raise NotImplementedError()
-    return result
 
 
 def bins(
@@ -54,7 +53,7 @@ def ambiguous_sites(
     allowednuc: tuple[str, ...] = ('A', 'a', 'C', 'c', 'G', 'g', 'T', 't'),
     n_jobs: int = -1,
 ) -> BedTool:
-    def job(contig, seq, allowed) -> list[Interval]:  # noqa: WPS430
+    def job(contig: str, seq: str, allowed: set[str]) -> list[Interval]:  # noqa: WPS430
         ambcursor = None
         ambiguous = []
 
@@ -75,15 +74,15 @@ def ambiguous_sites(
     if not fasta.is_file():
         raise ValueError(f"Fasta {fasta} doesn't exist.")
 
-    allowednuc = set(allowednuc)
+    allowed = set(allowednuc)
 
     if fasta.name.endswith('.gz'):
         stream = gzip.open(fasta, 'rt')
     else:
         stream = open(fasta, 'r')  # noqa: WPS515
 
-    fasta = SeqIO.parse(stream, 'fasta')
-    intervals = Parallel(n_jobs=n_jobs)(delayed(job)(seq.id, seq.seq, allowednuc) for seq in fasta)
+    sequences = SeqIO.parse(stream, 'fasta')
+    intervals = Parallel(n_jobs=n_jobs)(delayed(job)(seq.id, seq.seq, allowed) for seq in sequences)
     stream.close()
 
     return BedTool(list(chain(*intervals))).sort()

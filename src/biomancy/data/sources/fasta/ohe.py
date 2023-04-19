@@ -2,9 +2,11 @@ from pathlib import Path
 from typing import Optional, Union
 
 import numpy as np
+from numpy import typing as npt
 
 from .fasta import Fasta
-from ..data_source import DataSource, Strand
+from ..data_source import DataSource
+from ...typing import Strand, Data
 
 DEFAULT_ONE_HOT_ENCODING = (
     ('A', [0]),
@@ -35,9 +37,9 @@ class OneHotEncoder(DataSource):
         fasta: Union[Fasta, Path],
         *,
         mapping: Optional[NucleotidesOHE] = None,
-        **kwargs,
+        dtype: Optional[npt.DTypeLike] = 'float32',
     ):
-        super().__init__(**kwargs)
+        super().__init__(dtype=dtype)
 
         if isinstance(fasta, Path):
             fasta = Fasta(fasta)
@@ -46,22 +48,20 @@ class OneHotEncoder(DataSource):
         # Prepare the mapping matrix
         self.mapping = self._prepare_mapping(mapping)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         return super().__eq__(other) and \
             isinstance(other, OneHotEncoder) and \
             np.array_equal(other.mapping, self.mapping) and \
             self.fasta == other.fasta
 
-    __hash__ = None
-
-    def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> np.ndarray:
+    def _fetch(self, contig: str, strand: Strand, start: int, end: int) -> Data:
         sequence = self.fasta.load(contig, strand, start, end)
-        sequence = np.fromiter(sequence.encode('ASCII'), dtype=np.uint8, count=(end - start))
+        seqarray = np.fromiter(sequence.encode('ASCII'), dtype=np.uint8, count=(end - start))
         # One-hot-encoding
-        encoded = self.mapping[:, sequence]
+        encoded = self.mapping[:, seqarray]
         return encoded
 
-    def _prepare_mapping(self, mapping: Optional[NucleotidesOHE]) -> np.ndarray:
+    def _prepare_mapping(self, mapping: Optional[NucleotidesOHE]) -> Data:
         if mapping is None:
             mapping = dict(DEFAULT_ONE_HOT_ENCODING)
 

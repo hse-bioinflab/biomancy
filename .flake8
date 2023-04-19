@@ -53,6 +53,8 @@ ignore =
     # Line break after binary operator
     W504,
     # Syntax error: invalid syntax
-    E999
+    E999,
+    # Found wrong metadata variable: __all__
+    WPS410
 max-local-variables = 10
 max-arguments = 7
