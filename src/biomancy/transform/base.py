@@ -1,6 +1,7 @@
 import random
 from abc import ABC
 from abc import abstractmethod
+from typing import Any
 
 from .typing import Probability
 
@@ -11,7 +12,7 @@ class Transform(ABC):
             raise ValueError('Probability must be inside [0, 1] interval.')
         self.pb = pb
 
-    def __call__(self, **sample):
+    def __call__(self, **sample: dict[str, Any]) -> dict[str, Any]:  # type: ignore[return]
         match self.pb:
             case 'always':
                 return self._transform(**sample)
@@ -22,15 +23,15 @@ class Transform(ABC):
             case _:
                 return self._no_transform(**sample)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return isinstance(other, Transform) and other.pb == self.pb
 
-    __hash__ = None
+    __hash__ = None  # type: ignore[assignment]
 
     @abstractmethod
-    def _transform(self, **sample):
+    def _transform(self, **sample: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError()
 
     @abstractmethod
-    def _no_transform(self, **sample):
+    def _no_transform(self, **sample: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError()

@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, Any
 
+from numpy import typing as npt
 from pybedtools import Interval
 
 from .data.sources import DataSource
@@ -20,7 +21,7 @@ class GenomicDataset(object):
         self.intervals = tuple(intervals)
         self.interval_transform = interval_transform
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> dict[str, npt.NDArray[Any]]:
         it = self.intervals[idx]
         # Copy interval and strip meta information
         it = Interval(it.chrom, it.start, it.end, strand=it.strand)
@@ -32,5 +33,5 @@ class GenomicDataset(object):
             features[key] = source.fetch(it.chrom, it.strand, it.start, it.end)
         return features
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.intervals)
