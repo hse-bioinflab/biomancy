@@ -1,9 +1,11 @@
 [flake8]
-per-file-ignores =
-    # Should we completely ignore test files?
-    tests/*.py:WPS226,WPS432,WPS435,S101,D100,D103,WPS204,E800,WPS210,WPS231,WPS221,WPS220,WPS440,WPS303,WPS218,S301,S403,WPS442,WPS227
+# per-file-ignores =
+#    # Should we completely ignore test files?
+#    tests/*.py:WPS226,WPS432,WPS435,S101,D100,D103,WPS204,E800,WPS210,WPS231,WPS221,WPS220,WPS440,WPS303,WPS218,S301,S403,WPS442,WPS227,WPS345,WPS430
 max-line-length = 120
 ignore =
+    # Found a line that starts with a dot
+    WPS348,
     # Multiline parameters - style is not important
     WPS317,
     # Allow float zero, e.g. 0.0
@@ -18,6 +20,7 @@ ignore =
     N400,
     # isort must be configured to follow the pycharm formatting rules
     I001,
+    I003,
     I005,
     # Found variables that are only used for 'return'
     WPS331,
@@ -58,3 +61,4 @@ ignore =
     WPS410
 max-local-variables = 10
 max-arguments = 7
+max-raises = 5

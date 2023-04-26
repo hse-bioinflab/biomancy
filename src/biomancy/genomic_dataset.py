@@ -2,13 +2,14 @@ from typing import Optional, Any
 
 from numpy import typing as npt
 from pybedtools import Interval
+from torch.utils.data import Dataset
 
 from .data.sources import DataSource
 from .data.typing import BedLike
 from .transform.intervals import IntervalTransform
 
 
-class GenomicDataset(object):
+class GenomicDataset(Dataset[dict[str, npt.NDArray[Any]]]):
     def __init__(
         self,
         features: dict[str, DataSource],
