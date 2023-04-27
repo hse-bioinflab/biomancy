@@ -113,6 +113,7 @@ class OmicsTransformerСlassification(OmicsTransformer):
 
         Returns:
             Tensor: Tensor of shape (batch, num_classes)
+                Classification scores (before SoftMax)
         '''
         src = self.embed(src)
         src += self.feature_embed(features)
@@ -183,6 +184,7 @@ class OmicsTransformerSegmentation(OmicsTransformer):
 
         Returns:
             Tensor: Tensor of shape (batch, max_seq_len, num_classes)
+                Classification scores (before SoftMax)
         '''
         src = self.embed(src)
         src += self.feature_embed(features)
@@ -332,16 +334,16 @@ def positionalencoding1d(
     return pe
 
 def _get_activation_fn(activation: str):
-        '''
-        Return an activation function given a string
-        '''
-        if activation == 'relu':
-            return F.relu
-        if activation == 'gelu':
-            return F.gelu
-        if activation == 'glu':
-            return F.glu
-        raise RuntimeError(f'activation should be relu/gelu, not {activation}.')
+    '''
+    Return an activation function given a string
+    '''
+    if activation == 'relu':
+        return F.relu
+    if activation == 'gelu':
+        return F.gelu
+    if activation == 'glu':
+        return F.glu
+    raise RuntimeError(f'activation should be relu/gelu, not {activation}.')
 
 def _get_clones(module: nn.Module(), N: int) -> nn.ModuleList:
-        return nn.ModuleList([copy.deepcopy(module) for i in range(N)])
+    return nn.ModuleList([copy.deepcopy(module) for i in range(N)])
