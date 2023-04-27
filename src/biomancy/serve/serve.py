@@ -24,6 +24,10 @@ def run(
     strategy: PartitionStrategy,
     **kwargs: Any,
 ) -> None:
+    batch_size = kwargs.get('batch_size', None)
+    if batch_size is None:
+        raise ValueError('batch_size is a must')
+
     partitions = strategy.partition(intervals)
 
     # Prepare dataloader
@@ -38,12 +42,12 @@ def run(
     with torch.inference_mode():
         for batch in loader:
             predicts = model(batch)
-            pt = partitions[ind: ind + loader.batch_size]
+            pt = partitions[ind: ind + batch_size]
 
             for hk in hooks:  # noqa: WPS440
                 hk.on_batch_predicted(pt, batch, predicts)
 
-            ind += loader.batch_size
+            ind += batch_size
 
     for hk in hooks:  # noqa: WPS440
         hk.on_end()
