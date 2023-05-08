@@ -51,15 +51,15 @@ class StratifiedGenomicSampler(Sampler[int]):
         else:
             generator = self.generator
 
-        N = len(self._strata)
+        N = len(self._strata)  # noqa: WPS111,N806
         to_draw = [self.num_samples // N for _ in range(N)]
 
         # Add what is left to fill the batch
         tail = self.num_samples % N
         if tail > 0:
             indices = torch.randperm(N, dtype=torch.int64, generator=generator)[:tail].tolist()
-            for stratum in indices:
-                to_draw[stratum] += 1
+            for stidx in indices:
+                to_draw[stidx] += 1
 
         for stratum, cnt in zip(self._strata, to_draw):
             if cnt > 0:
