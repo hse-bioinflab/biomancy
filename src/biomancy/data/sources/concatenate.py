@@ -4,7 +4,7 @@ import numpy as np
 from numpy import typing as npt
 
 from .data_source import DataSource
-from ..typing import Strand, Data
+from biomancy.typing import Strand, Data
 
 
 class Concatenate(DataSource):

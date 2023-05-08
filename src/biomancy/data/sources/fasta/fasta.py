@@ -3,7 +3,7 @@ from pathlib import Path
 
 from Bio import SeqIO, Seq
 
-from ...typing import Strand
+from biomancy.typing import Strand
 
 
 def _parse(fasta: Path) -> dict[str, str]:

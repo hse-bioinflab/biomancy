@@ -6,7 +6,7 @@ import pyBigWig
 from numpy import typing as npt
 
 from .data_source import DataSource
-from ..typing import Data, Strand
+from biomancy.typing import Data, Strand
 
 _State = tuple[dict[Strand, Path], float, npt.DTypeLike]
 

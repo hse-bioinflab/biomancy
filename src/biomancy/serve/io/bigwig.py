@@ -7,8 +7,7 @@ import pyBigWig
 from numpy import typing as npt
 from pybedtools import Interval
 
-from biomancy.data.typing import ChromSizes
-from biomancy.typing import PathLike
+from biomancy.typing import ChromSizes, PathLike
 from .hook import Hook, Adapter
 from .iotools import quantize
 

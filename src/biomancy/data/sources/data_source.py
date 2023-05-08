@@ -3,7 +3,7 @@ from typing import Callable
 
 from numpy import typing as npt
 
-from ..typing import Strand, Data
+from biomancy.typing import Strand, Data
 
 
 class DataSource(ABC):

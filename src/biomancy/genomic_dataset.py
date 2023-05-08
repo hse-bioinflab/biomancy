@@ -5,7 +5,7 @@ from pybedtools import Interval
 from torch.utils.data import Dataset
 
 from .data.sources import DataSource
-from .data.typing import BedLike
+from biomancy.typing import BedLike
 from .transform.intervals import IntervalTransform
 
 
@@ -16,8 +16,8 @@ class GenomicDataset(Dataset[dict[str, npt.NDArray[Any]]]):
         intervals: BedLike,
         interval_transform: Optional[IntervalTransform] = None,
     ):
-        if not features or not intervals:
-            raise ValueError('There must be at least 1 data source for features and at least 1 genomic interval.')
+        if not intervals:
+            raise ValueError('There must be at least 1 genomic interval.')
         self.features = features
         self.intervals = tuple(intervals)
         self.interval_transform = interval_transform

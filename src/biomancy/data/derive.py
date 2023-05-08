@@ -7,7 +7,7 @@ from itertools import chain
 from joblib import Parallel, delayed
 from pybedtools import Interval, BedTool, chromsizes as fetch_chromsizes
 
-from .typing import BedLike, ChromSizes
+from biomancy.typing import BedLike, ChromSizes
 
 
 def chromsizes(*, assembly: Optional[str] = None, fasta: Optional[Path] = None) -> ChromSizes:

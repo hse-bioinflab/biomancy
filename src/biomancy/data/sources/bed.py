@@ -8,7 +8,7 @@ from numpy import typing as npt
 from pybedtools import BedTool
 
 from .data_source import DataSource
-from ..typing import Data, Strand
+from biomancy.typing import Data, Strand
 
 
 class BED(DataSource):

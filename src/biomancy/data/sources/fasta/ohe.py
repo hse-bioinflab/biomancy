@@ -6,7 +6,7 @@ from numpy import typing as npt
 
 from .fasta import Fasta
 from ..data_source import DataSource
-from ...typing import Strand, Data
+from biomancy.typing import Strand, Data
 
 DEFAULT_ONE_HOT_ENCODING = (
     ('A', [0]),
