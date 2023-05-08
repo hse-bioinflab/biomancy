@@ -9,7 +9,7 @@ from .io import Hook
 from .strategy import PartitionStrategy
 from .typing import Predictor
 from ..data.sources import DataSource
-from ..data.typing import BedLike
+from biomancy.typing import BedLike
 from ..genomic_dataset import GenomicDataset
 
 ModelOutput = dict[str, npt.NDArray[Any]]

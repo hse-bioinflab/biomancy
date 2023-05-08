@@ -3,7 +3,7 @@ from typing import Iterable
 
 from pybedtools import Interval
 
-from biomancy.data.typing import BedLike
+from biomancy.typing import BedLike
 from .partitions import Partitions
 
 
