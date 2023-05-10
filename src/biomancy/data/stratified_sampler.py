@@ -43,7 +43,7 @@ class StratifiedGenomicSampler(Sampler[int]):
             )
         self._num_samples = val
 
-    def __iter__(self) -> Iterator[int]:
+    def __iter__(self) -> Iterator[int]:  # noqa: WPS210
         if self.generator is None:
             seed = int(torch.empty((), dtype=torch.int64).random_().item())
             generator = torch.Generator()
@@ -61,12 +61,23 @@ class StratifiedGenomicSampler(Sampler[int]):
             for stidx in indices:
                 to_draw[stidx] += 1
 
-        for stratum, cnt in zip(self._strata, to_draw):
+        result = []
+        for ind in range(N):
+            stratum, cnt = self._strata[ind], to_draw[ind]
             if cnt > 0:
                 indices = torch.randint(high=len(stratum), size=(cnt,), generator=generator, dtype=torch.int64).tolist()
                 # Map strata indices to dataset indices
                 indices = [stratum[ind] for ind in indices]
-                yield from indices
+                result.append(indices)
+
+        # yield stratum-by-stratum
+        for _ in range(self.num_samples // N):
+            for res in result:  # noqa: WPS526
+                yield res.pop()
+
+        # yield what is left
+        left = [st[0] for st in result if st]
+        yield from left
 
     def __len__(self) -> int:
         return self.num_samples
