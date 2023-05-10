@@ -20,7 +20,14 @@ def chromsizes(*, assembly: Optional[str] = None, fasta: Optional[Path] = None) 
         return {contig: end for contig, (_, end) in result.items()}
     else:
         assert fasta is not None  # noqa: S101,WPS503
-        raise NotImplementedError()
+        index = fasta.parent / (fasta.name + ".fai")
+
+        sizes = {}
+        with open(index, 'r') as stream:
+            for line in stream:
+                contig, size = line.split("\t")[:2]
+                sizes[contig] = int(size)
+        return sizes
 
 
 def bins(
