@@ -21,7 +21,7 @@ def chromsizes(*, assembly: Optional[str] = None, fasta: Optional[Path] = None) 
     else:
         assert fasta is not None  # noqa: S101,WPS503
         index = fasta.parent / (fasta.name + '.fai')  # noqa: WPS336
-  
+
         sizes = {}
         with open(index, 'r') as stream:
             for line in stream:
